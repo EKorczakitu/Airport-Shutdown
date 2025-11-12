@@ -17,16 +17,17 @@ routes_df = routes[["Airline", "Source airport", "Destination airport"]]
 #print(airports_df.head())
 #print(routes_df.head())
 
-print(airports_df.shape)
-print(routes_df.shape)
+# print(airports_df.shape)
+# print(routes_df.shape)
 
-print(airports_df.isnull().sum())
-print(routes_df.isnull().sum())
+# print(airports_df.isnull().sum())
+# print(routes_df.isnull().sum())
 
 airports_df = airports_df.dropna()
 routes_df = routes_df.dropna()
 
-print(airports_df.shape)
-print(routes_df.shape)
+# print(airports_df.shape)
+# print(routes_df.shape)
 
-print(airports_df["iso_country"].value_counts())
+#print(airports_df["iso_country"].value_counts())
+
