@@ -24,7 +24,7 @@ routes["Destination airport ID"] = routes["Destination airport ID"].astype(int)
 # =====================================================
 nato_countries = [
     "US","CA","IS","NO","DK","NL","BE","LU","FR","DE","IT","PT",
-    "UK","ES","GR","TR","PL","CZ","HU","SK","SI","HR","BG","RO",
+    "GB","ES","GR","TR","PL","CZ","HU","SK","SI","HR","BG","RO",
     "EE","LV","LT","AL","ME","MK", "FI", "SE"
 ]
 
@@ -51,45 +51,66 @@ for _, r in airports_nato.iterrows():
 edge_counts = routes_nato.groupby(["Source airport ID", "Destination airport ID"]).size().reset_index(name="weight")
 for _, r in edge_counts.iterrows():
     G.add_edge(int(r["Source airport ID"]), int(r["Destination airport ID"]), weight=int(r["weight"]))
+    
+n=G.number_of_nodes()
+print(n)
+degrees = [d for n, d in G.degree()]
+avg_degree = sum(degrees) / n
+print(f"Average Total Degree: {avg_degree:.4f}")
 
-# Remove isolated nodes (Airports with no flights)
-G.remove_nodes_from(list(nx.isolates(G)))
+lcc_nodes = max(nx.weakly_connected_components(G), key=len)
+G_lcc = G.subgraph(lcc_nodes).copy()
+num_nodes = G_lcc.number_of_nodes()
+num_edges = G_lcc.number_of_edges()
+G_lcc_undirected = G_lcc.to_undirected()
+diameter = nx.diameter(G_lcc_undirected)
+num_weak = nx.number_strongly_connected_components(G)
 
-# PRINT CLEAR STATS
-print("=" * 40)
-print(f"DOTS (Airports):  {G.number_of_nodes()}")
-print(f"LINES (Routes):   {G.number_of_edges()}")
-print("=" * 40)
+print(f"Size (Nodes):     {num_nodes}")
+print(f"Size (Edges):     {num_edges}")
+print(f"Diameter (Hops):  {diameter}")
+print(f"Num_cc:           {num_weak}")
 
-# =====================================================
-# 4. VISUALIZATION
-# =====================================================
-plt.figure(figsize=(14, 14))
 
-print("Calculating layout...")
-pos = nx.spring_layout(G, k=0.10, iterations=50, seed=42)
 
-# Draw Edges (The 44,000 lines)
-# We make them thin and transparent so they don't block the view
-nx.draw_networkx_edges(
-    G, pos,
-    alpha=1,         
-    width=0.1,
-    edge_color='green',
-    arrows=False
-)
+# # Remove isolated nodes (Airports with no flights)
+# G.remove_nodes_from(list(nx.isolates(G)))
 
-# Draw Nodes (The 1,800 dots)
-nx.draw_networkx_nodes(
-    G, pos,
-    node_size=15,
-    node_color='black',
-    alpha=0.8,
-    linewidths=0
-)
+# # PRINT CLEAR STATS
+# print("=" * 40)
+# print(f"DOTS (Airports):  {G.number_of_nodes()}")
+# print(f"LINES (Routes):   {G.number_of_edges()}")
+# print("=" * 40)
 
-# Title showing the exact counts
-plt.title(f"NATO Network: {G.number_of_nodes()} Airports (Dots) | {G.number_of_edges()} Routes (Lines)", fontsize=16)
-plt.axis("off")
-plt.tight_layout()
-plt.show()
+# # =====================================================
+# # 4. VISUALIZATION
+# # =====================================================
+# plt.figure(figsize=(14, 14))
+
+# print("Calculating layout...")
+# pos = nx.spring_layout(G, k=0.10, iterations=50, seed=42)
+
+# # Draw Edges (The 44,000 lines)
+# # We make them thin and transparent so they don't block the view
+# nx.draw_networkx_edges(
+#     G, pos,
+#     alpha=1,         
+#     width=0.1,
+#     edge_color='green',
+#     arrows=False
+# )
+
+# # Draw Nodes (The 1,800 dots)
+# nx.draw_networkx_nodes(
+#     G, pos,
+#     node_size=15,
+#     node_color='black',
+#     alpha=0.8,
+#     linewidths=0
+# )
+
+# # Title showing the exact counts
+# plt.title(f"NATO Network: {G.number_of_nodes()} Airports (Dots) | {G.number_of_edges()} Routes (Lines)", fontsize=16)
+# plt.axis("off")
+# plt.tight_layout()
+# plt.show()

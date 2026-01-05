@@ -82,7 +82,7 @@ airports["id"] = airports["id"].astype(int)
 # Filter for NATO Countries
 nato_countries = [
     "US","CA","IS","NO","DK","NL","BE","LU","FR","DE","IT","PT",
-    "UK","ES","GR","TR","PL","CZ","HU","SK","SI","HR","BG","RO",
+    "GB","ES","GR","TR","PL","CZ","HU","SK","SI","HR","BG","RO",
     "EE","LV","LT","AL","ME","MK","SE","FI"
 ]
 airports_nato = airports[airports["iso_country"].isin(nato_countries)]
