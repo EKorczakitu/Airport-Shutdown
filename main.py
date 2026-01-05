@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 import matplotlib.pyplot as plt
+from collections import Counter
 
 # Load datasets
 airports = pd.read_csv("data/airports.csv")
@@ -153,6 +154,23 @@ print(f"NC backbone: kept {G_ACTIVE.number_of_edges():,} of {len(E):,} edges; no
 
 # Keep the original for evaluation
 G_FULL = G_dir
+
+# For directed graphs: total degree = in-degree + out-degree
+degrees = [d for _, d in G_FULL.degree() if d > 0]
+
+degree_counts = Counter(degrees)
+
+k_vals = np.array(sorted(degree_counts.keys()))
+pk_vals = np.array([degree_counts[k] for k in k_vals], dtype=float) / len(degrees)
+
+plt.figure(figsize=(7,5))
+plt.loglog(k_vals, pk_vals, 'o')
+plt.xlabel("Degree k")
+plt.ylabel("P(k)")
+plt.title("NATO network - Degree distribution (log–log)")
+plt.grid(True, which="both", ls="--", alpha=0.4)
+plt.tight_layout()
+plt.show()
 
 
 
